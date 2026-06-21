@@ -7,7 +7,7 @@ processes them, and forwards aggregated/individual reports over LoRa for long-ra
 Dependencies
 ------------
 - Arduino core for ESP32
-- LoRa library (e.g., Sandeep Mistry's `LoRa`)
+- LoRa library
 
 Configuration
 -------------
