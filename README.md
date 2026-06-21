@@ -34,6 +34,3 @@ See the `firmware/` folder for starter sketches:
 - `firmware/esp8266_node/esp8266_node.ino` — outlet node template (ESP8266, ESP-NOW)
 - `firmware/esp32_master/esp32_master.ino` — master (ESP32) receives ESP-NOW and forwards over LoRa
 
-Contact
--------
-For more details or to share hardware specs, update this README or open an issue.
