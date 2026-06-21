@@ -1,4 +1,48 @@
 /*
+  ESP32 Master - example sketch
+
+  - Receives ESP-NOW packets from ESP8266 nodes.
+  - Optionally relays aggregated data over LoRa to a remote server/gateway.
+  - This is a template; add LoRa library and config for your module (SX127x / RFM95).
+*/
+
+#include <Arduino.h>
+#include <WiFi.h>
+#include <esp_now.h>
+
+struct MeterPayload {
+  uint32_t node_id;
+  uint32_t timestamp;
+  float liters;
+};
+
+void onDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
+  MeterPayload data;
+  memcpy(&data, incomingData, sizeof(data));
+  Serial.printf("Recv from node=%u liters=%.2f ts=%u\n", data.node_id, data.liters, data.timestamp);
+
+  // TODO: aggregate/store/send via LoRa
+}
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
+
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("ESP-NOW init failed");
+    return;
+  }
+
+  esp_now_register_recv_cb(onDataRecv);
+
+  // Initialize LoRa module here (e.g., using RadioHead or LoRa library)
+}
+
+void loop() {
+  // Periodic tasks: analytics, LoRa uplink, health checks
+  delay(1000);
+}
+/*
   ESP32 Master
 
   Receives ESP-NOW packets from ESP8266 nodes, logs them over Serial,

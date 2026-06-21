@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Smart Water Meter — Live Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background: #f4f4f4; }
+  </style>
+</head>
+<body>
+  <h1>Smart Water Meter — Live Readings</h1>
+  <p>Fill in your Firebase config below in the script section.</p>
+
+  <table id="readings">
+    <thead>
+      <tr><th>Time</th><th>MAC</th><th>Flow (L/min)</th><th>Pulses</th><th>Status</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Firebase JS SDK (v8 for simplicity) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    // TODO: replace with your Firebase config
+    var firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "",
+      appId: ""
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    var db = firebase.database();
+    var ref = db.ref('readings');
+
+    ref.orderByChild('timestamp').limitToLast(100).on('child_added', function(snapshot) {
+      var data = snapshot.val();
+      var tbody = document.querySelector('#readings tbody');
+      var tr = document.createElement('tr');
+      var t = new Date(data.timestamp);
+      tr.innerHTML = '<td>' + t.toLocaleString() + '</td>' +
+                     '<td>' + (data.mac||'unknown') + '</td>' +
+                     '<td>' + (data.flowRate !== undefined ? data.flowRate.toFixed(2) : '-') + '</td>' +
+                     '<td>' + (data.pulseCount||0) + '</td>' +
+                     '<td>' + (data.sensorStatus===0? 'OK' : (data.sensorStatus===1? 'No Flow' : 'Error')) + '</td>';
+      tbody.insertBefore(tr, tbody.firstChild);
+    });
+  </script>
+</body>
+</html>
